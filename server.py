@@ -1,6 +1,7 @@
 from flask import Flask, url_for, request, render_template, json, redirect
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField, IntegerField
+from wtforms.fields.html5 import EmailField
 from wtforms.validators import DataRequired
 from data import db_session, users, jobs
 
@@ -16,6 +17,19 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Доступ')
 
 
+class RegisterForm(FlaskForm):
+    email = EmailField('Почта', validators=[DataRequired()])
+    password = PasswordField('Пароль', validators=[DataRequired()])
+    password_again = PasswordField('Повторите пароль', validators=[DataRequired()])
+    surname = StringField('Фамилия пользователя', validators=[DataRequired()])
+    name = StringField('Имя пользователя', validators=[DataRequired()])
+    age = IntegerField('Возраст')
+    position = StringField('Должность пользователя', validators=[DataRequired()])
+    speciality = StringField('Специализация пользователя', validators=[DataRequired()])
+    address = StringField('Адрес пользователя', validators=[DataRequired()])
+    submit = SubmitField('Войти')
+
+
 def view_job():
     job_list = []
     db_session.global_init("db/mars_explorer.sqlite")
@@ -27,6 +41,36 @@ def view_job():
              job_elem.collaborators,
              job_elem.is_finished])
     return job_list
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        if form.password.data != form.password_again.data:
+            return render_template('register.html', title='Регистрация',
+                                   form=form,
+                                   message="Пароли не совпадают")
+        session = db_session.create_session()
+        if session.query(users.User).filter(users.User.email == form.email.data).first():
+            return render_template('register.html', title='Регистрация',
+                                   form=form,
+                                   message="Такой пользователь уже есть")
+        user = users.User(
+            surname=form.surname.data,
+            name=form.name.data,
+            email=form.email.data,
+            age=form.age.data,
+            position=form.position.data,
+            speciality=form.speciality.data,
+            address=form.address.data
+        )
+        user.set_password(form.password.data)
+        session.add(user)
+        session.commit()
+        return redirect('/login')
+    return render_template('register.html', title='Регистрация', form=form,
+                           css_file=url_for('static', filename='css/style.css'))
 
 
 @app.route('/login', methods=['GET', 'POST'])
