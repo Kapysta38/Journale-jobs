@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% set text = 'Каюта №' %}
+    <div class="table">
+        <h2 align="center">Оформление каюты</h2>
+        <table align="center">
+            <tr>
+                <td>Цвет стен</td>
+                <td>Эмблема</td>
+            </tr>
+            <tr>
+                <td><img src={{wall_color}} width="500" height="500" alt="Неверный парметр"></td>
+                <td><img src={{emblem_color}} width="500" height="500" alt="Неверный парметр"></td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% set text = 'Каюта №' %}
+<div class="jobs">
+    <h2 align="center">Works log</h2>
+    {% for job in job_list %}
+    <h3 align="center">Action #{{ loop.index }}</h3>
+    <table align="center" class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">
+                Title of activity
+            </th>
+            <th scope="col">
+                Team leader
+            </th>
+            <th scope="col">
+                Duration
+            </th>
+            <th scope="col">
+                List of collaborators
+            </th>
+            <th scope="col">
+                Is finished
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <th>
+                {{job[0]}}
+            </th>
+            <th>
+                {{job[1]}}
+            </th>
+            <th>
+                {{job[2]}} hours
+            </th>
+            <th>
+                {{job[3]}}
+            </th>
+            <th>
+                {% if job[4] %}
+                Is finished
+                {% else %}
+                Is not finished
+                {% endif %}
+            </th>
+        </tr>
+        </tbody>
+    </table>
+    {% endfor %}
+</div>
+{% endblock %}
