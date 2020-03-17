@@ -7,6 +7,7 @@ from data import db_session, users, jobs
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
+db_session.global_init("db/mars_explorer.sqlite")
 
 
 class LoginForm(FlaskForm):
@@ -32,7 +33,6 @@ class RegisterForm(FlaskForm):
 
 def view_job():
     job_list = []
-    db_session.global_init("db/mars_explorer.sqlite")
     session = db_session.create_session()
     for job_elem in session.query(jobs.Job).all():
         user = session.query(users.User).filter(users.User.id == job_elem.team_leader).first()
